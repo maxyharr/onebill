@@ -7,80 +7,120 @@
   </ion-header>
 
   <ion-content>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Get Started</ion-card-title>
-          <ion-card-subtitle>Let's link your accounts so we can calculate your payment schedule</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <p>Step 1. Link your accounts</p>
-          <p>Step 2. Tell us when you get paid</p>
-          <p>Step 3. Now you can view your account estimated account balanace after all minimum payments have been removed</p>
-        </ion-card-content>
-      </ion-card>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Get Started</ion-card-title>
+        <ion-card-subtitle>Let's link your accounts so we can calculate your payment schedule</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Step 1. Link your accounts</p>
+        <p>Step 2. Tell us when you get paid</p>
+        <p>Step 3. Now you can view your account estimated account balanace after all minimum payments have been removed</p>
+        <mr-ngx-plaid-link-button
+          env="development"
+          institution=""
+          clientName="One Bill"
+          className="launch-plaid-link-button"
+          buttonText="Link your bank account"
+          [publicKey]="plaidKey"
+          (Success)="onPlaidSuccess($event)"
+          (Exit)="onPlaidExit($event)"
+          (Load)="onPlaidLoad($event)"
+          (Event)="onPlaidEvent($event)"
+          (Click)="onPlaidClick($event)"></mr-ngx-plaid-link-button>
+      </ion-card-content>
+    </ion-card>
 
-      <!-- TODO: Show Schedule list  -->
-      <ion-card *ngIf="accountsLinked">
-        Account list
-      </ion-card>
+    <!-- TODO: Show Schedule list  -->
+    <ion-card *ngIf="accountsLinked">
+      <!-- <div>{{bankAccounts[0]?.data?.accounts | json}}</div> -->
+      <ion-card-header>
+        <ion-card-title>This month's schedule</ion-card-title>
+        <!-- <ion-card-subtitle></ion-card-subtitle> -->
+      </ion-card-header>
+      <ion-list>
+        <ion-item detail="false">
+          <ion-label><strong>Source</strong></ion-label>
+          <ion-label slot="end"><strong>Balance</strong></ion-label>
+          <ion-label slot="end"><strong>Payment</strong></ion-label>
+        </ion-item>
 
-      <ion-card *ngIf="!accountsLinked">
-        <ion-card-header>
-          <ion-card-title>This month's schedule</ion-card-title>
-          <!-- <ion-card-subtitle></ion-card-subtitle> -->
-        </ion-card-header>
 
-        <ion-card-content>
-          <ion-list>
-            <ion-item detail="false">
-              <ion-label><strong>Due Date</strong></ion-label>
-              <ion-label slot="end"><strong>Source</strong></ion-label>
-              <ion-label slot="end"><strong>Amount</strong></ion-label>
-            </ion-item>
-            <ion-item detail="false">
-              <ion-label color="medium">Feb 15</ion-label>
-              <ion-label slot="end">Income</ion-label>
-              <ion-label slot="end" color="success">+$1000.00</ion-label>
-            </ion-item>
+        <ion-item detail="false" *ngFor="let account of accounts">
+          <ion-label>{{account.officialName}}</ion-label>
+          <ion-label slot="end" [color]="colorForAccountValue(account.type, account.balances.current)">
+            {{account.balances.current | currency:primaryCurrencyCode}}
+          </ion-label>
+          <ion-label slot="end">TODO</ion-label>
+        </ion-item>
 
-            <ion-item detail="false">
-              <ion-label color="medium">Feb 15</ion-label>
-              <ion-label slot="end">American Express Blue Cash</ion-label>
-              <ion-label slot="end" color="danger">-$25.00</ion-label>
-            </ion-item>
+        <ion-item>
+          <ion-label><strong>Totals</strong></ion-label>
+          <ion-label slot="end" color="danger">
+            <strong>{{total | currency:primaryCurrencyCode}}</strong>
+          </ion-label>
+          <ion-label slot="end">TODO</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
 
-            <ion-item detail="false">
-              <ion-label color="medium">Feb 17</ion-label>
-              <ion-label slot="end">Citi Double Cash</ion-label>
-              <ion-label slot="end" color="danger">-$23.00</ion-label>
-            </ion-item>
+    <ion-card *ngIf="!accountsLinked">
+      <ion-card-header>
+        <ion-card-title>Sample monthly schedule</ion-card-title>
+        <ion-card-subtitle>Feel fre to play around with this sample account. When you're ready, click "Link your bank account"</ion-card-subtitle>
+      </ion-card-header>
 
-            <ion-item detail="false">
-                <ion-label color="medium">Feb 18</ion-label>
-                <ion-label slot="end">Capital One No Hassle</ion-label>
-                <ion-label slot="end" color="danger">-$71.00</ion-label>
-            </ion-item>
+      <ion-card-content>
+        <ion-list>
+          <ion-item detail="false">
+            <ion-label><strong>Due Date</strong></ion-label>
+            <ion-label slot="end"><strong>Source</strong></ion-label>
+            <ion-label slot="end"><strong>Amount</strong></ion-label>
+          </ion-item>
+          <ion-item detail="false">
+            <ion-label color="medium">Feb 15</ion-label>
+            <ion-label slot="end">Income</ion-label>
+            <ion-label slot="end" color="success">+$1000.00</ion-label>
+          </ion-item>
 
-            <ion-item>
+          <ion-item detail="false">
+            <ion-label color="medium">Feb 15</ion-label>
+            <ion-label slot="end">American Express Blue Cash</ion-label>
+            <ion-label slot="end" color="danger">-$25.00</ion-label>
+          </ion-item>
+
+          <ion-item detail="false">
+            <ion-label color="medium">Feb 17</ion-label>
+            <ion-label slot="end">Citi Double Cash</ion-label>
+            <ion-label slot="end" color="danger">-$23.00</ion-label>
+          </ion-item>
+
+          <ion-item detail="false">
               <ion-label color="medium">Feb 18</ion-label>
-              <ion-label slot="end">Chase Sapphire</ion-label>
-              <ion-label slot="end" color="danger">-$109.00</ion-label>
-            </ion-item>
+              <ion-label slot="end">Capital One No Hassle</ion-label>
+              <ion-label slot="end" color="danger">-$71.00</ion-label>
+          </ion-item>
 
-            <ion-item>
-              <ion-label><strong>Total Expenses</strong></ion-label>
-              <ion-label slot="end"></ion-label>
-              <ion-label slot="end" color="danger">-$228.00</ion-label>
-            </ion-item>
+          <ion-item>
+            <ion-label color="medium">Feb 18</ion-label>
+            <ion-label slot="end">Chase Sapphire</ion-label>
+            <ion-label slot="end" color="danger">-$109.00</ion-label>
+          </ion-item>
 
-            <ion-item>
-              <ion-label><strong>Available to spend</strong></ion-label>
-              <ion-label slot="end"></ion-label>
-              <ion-label slot="end" color="success">${{1000 - 228}}.00</ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
+          <ion-item>
+            <ion-label><strong>Total Expenses</strong></ion-label>
+            <ion-label slot="end"></ion-label>
+            <ion-label slot="end" color="danger">-$228.00</ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-label><strong>Available to spend</strong></ion-label>
+            <ion-label slot="end"></ion-label>
+            <ion-label slot="end" color="success">${{1000 - 228}}.00</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
 
   </ion-content>
 

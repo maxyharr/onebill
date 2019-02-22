@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { SchedulePage } from './schedule.page';
 
+import { NgxPlaidLinkModule } from 'ngx-plaid-link'
+
 const routes: Routes = [
   {
     path: '',
@@ -19,7 +21,9 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    NgxPlaidLinkModule
+
   ],
   declarations: [SchedulePage]
 })

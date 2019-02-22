@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  plaidKey: 'f4ea289b3755d1bec8482fa9ae2d38',
+  apiUrl: 'http://localhost:8000',
+  db: 'onebill-development'
 };
 
 /*
